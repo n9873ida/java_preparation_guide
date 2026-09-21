@@ -1,33 +1,1042 @@
-[11:33 am, 18/9/2026] Amarnath Tiwari: synchronised HashMap vs ConcurrentHashMap
-[11:33 am, 18/9/2026] Amarnath Tiwari: Given an String (anamika), create its frequency String( a2n1m1i1k1) using java stream
-[11:33 am, 18/9/2026] Amarnath Tiwari: 1- Preserve the insertion order in the output 
-2- in output character should be in ascending order
-[11:33 am, 18/9/2026] Amarnath Tiwari: Asked Interview questions:
+package written_notes;
+
+import java.util.*;
+import java.util.function.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+
+public class StreamExample {
+    public static void main(String[] args) {
+//        defaultFI();
+//        basicStreamFunctions();
+        newStreamExample();
+    }
+
+    static void newStreamExample() {
+        List<List<Integer>> lists = Arrays.asList(Arrays.asList(1, 2, 3), Arrays.asList(4, 5, 6), Arrays.asList(7, 8, 9));
+        List<Integer> list = lists.stream().flatMap(Collection::stream).toList();
+        list.forEach((val) -> System.out.print(val + " "));
+        System.out.println();
+
+        double average = List.of(78, 5, 41, 14, 26, 86, 8).stream().mapToInt(val -> val.intValue()).average().orElse(0);
+        System.out.println("average of list: " + average);
+
+        List.of("Ram", "shYam", "shyam", "suraj", "Mathur", "shubham", "anuj", "kalu", "ramu").stream().filter(str -> str.toUpperCase().startsWith("S")).forEach((val) -> System.out.print(val + " "));
+        System.out.println();
+        List.of("Rom", "ram", "shYam", "shyam", "suraj", "Mathur", "shubham", "anuj", "kalu", "ramu").stream().min(Comparator.comparing(String::length)).ifPresent(System.out::println);
+        List.of("Rom", "ram", "shYam", "shyam", "suraj", "Mathur", "shubham", "anuj", "kalu", "ramu").stream().collect(Collectors.groupingBy(String::length)).forEach((count, values) -> System.out.print(count + ": " + values + ", "));
+        List.of("Rom", "ram", "shYam", "shyam", "suraj", "Mathur", "shubham", "anuj", "kalu", "ramu").stream().sorted(Comparator.reverseOrder()).min(Comparator.comparing(String::length)).ifPresent(System.out::println);
+        System.out.println();
+        List.of("apple", "banana", "cherry").stream().collect(Collectors.toMap(Function.identity(), Function.identity())).forEach((key, value) -> System.out.print(key + " -> " + value + ", "));
+        System.out.println();
+        List.of(78, 5, 41, 14, 26, 26, 86, 8, 8).stream().distinct().sorted(Comparator.naturalOrder()).limit(3).forEach(val -> System.out.print(val + " "));
+        System.out.println();
+        List.of("Rom", "ram","ram", "shYam", "shyam", "suraj", "Mathur", "shubham", "anuj", "kalu", "ramu").stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).forEach((count, values) -> System.out.print(count + ": " + values + ", "));
+        List.of("Rom", "ram","ram", "shYam", "shyam", "suraj", "Mathur", "shubham", "anuj", "kalu", "ramu").stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).forEach((count, values) -> System.out.print(count + ": " + values + ", "));
+    }
+
+
+    static void basicStreamFunctions() {
+        List<Integer> list = Arrays.asList(78, 5, 41, 14, 26, 86, 8);
+        Stream<Integer> stream = list.stream();                // create stream
+//        stream.forEach(System.out::println);                    //once consumed, cannot be used again
+        Optional<Integer> minVal = stream.min(Integer::compare);  //stream already used, will give error if used with above statement
+        minVal.ifPresent(val -> System.out.println("min val of stream is: " + val));
+        minVal.ifPresent(System.out::println);
+
+        List.of(8, 4, 7, 5, 7).stream().max(Integer::compare).ifPresent(System.out::println);
+
+        Stream.of(78, 5, 41, 14, 26, 86, 8).sorted().forEach(val -> System.out.print(val + ", "));
+        System.out.println();
+        Arrays.asList(78, 5, 41, 14, 26, 86, 8).stream().filter(n -> n % 2 == 0).sorted(Integer::compare).findFirst().ifPresent(System.out::println);
+        Stream.of(78, 5, 41, 14, 14, 26, 26, 86, 8).filter(n -> n % 2 == 0).sorted((val1, val2) -> Integer.compare(val2, val1)).forEach(val -> System.out.print(val + ", "));
+        System.out.println();
+        Stream.of(78, 5, 41, 14, 14, 26, 26, 86, 8).filter(n -> n % 2 == 0).distinct().sorted((val1, val2) -> Integer.compare(val2, val1)).forEach(val -> System.out.print(val + ", "));
+        System.out.println();
+        Stream.of(78, 5, 41, 14, 14, 26, 26, 86, 8).filter(n -> n % 2 == 0)
+                .distinct().limit(2)
+                .sorted((val1, val2) -> Integer.compare(val2, val1)).forEach(val -> System.out.print(val + ", "));
+        System.out.println();
+        Stream.of(78, 5, 41, 14, 14, 26, 26, 86, 8).filter(n -> n % 2 == 0)
+                .distinct().limit(2).skip(1)
+                .sorted((val1, val2) -> Integer.compare(val2, val1)).forEach(val -> System.out.print(val + ", "));
+        System.out.println();
+        Stream.of(78, 5, 41, 14, 14, 26, 26, 86, 8).filter(n -> n % 2 == 0)
+                .map(n -> n * n)
+                .sorted().forEach(val -> System.out.print(val + ", "));
+        System.out.println();
+        long counts = Stream.of(78, 5, 41, 14, 14, 26, 26, 86, 8).filter(n -> n % 2 == 0)
+                .map(n -> n * n)
+                .count();
+        System.out.println("counts: " + counts);
+        List<Integer> list2 = Stream.of(45, 24, 1, 7, 3, 9, 8, 4, 1, 2, 4, 2, 5, 4, 2, 5, 3, 5).toList();
+
+        IntStream intStream = Arrays.asList(78, 5, 41, 14, 26, 86, 8).stream().mapToInt(Integer::intValue);
+        OptionalDouble averageOfNum = intStream.average();
+        averageOfNum.ifPresent(System.out::println);
+
+        System.out.println("Sum is: " + Stream.of(78, 5, 41, 14, 26, 86, 8).filter(n -> n > 10).reduce(1, (a, b) -> a + b));
+        System.out.println("Sum is: " + Stream.of(78, 15, 41, 14, 26, 86, 8).mapToDouble(Integer::doubleValue).filter(n -> n > 10).
+                reduce(1, (a, b) -> {
+                    if (b % 2 == 0)
+                        return a * Math.sqrt(b);
+                    else
+                        return a;
+                }));
+
+        System.out.println("Sum is: " + Stream.of(78, 15, 41, 14, 26, 86, 8).mapToDouble(Integer::doubleValue).filter(n -> n > 10).
+                reduce(1, (a, b) -> a * Math.sqrt(b)));
+
+        System.out.println("Sum is: " + Stream.of(78, 15, 41, 14, 26, 86, 8).parallel().filter(n -> n > 10).
+                reduce(1.0,
+                        (a, b) -> a * Math.sqrt(b),
+                        (a, b) -> a * b
+                ));
+
+        Stream.of(4, 5, 7, 6, 8, 7, 1, 2, 3).map(n -> n * 2).forEach(n -> System.out.print(n + " "));
+        System.out.println();
+
+        List<List<Integer>> lists = Arrays.asList(Arrays.asList(1, 2, 3), Arrays.asList(4, 5, 6), Arrays.asList(7, 8, 9));
+        lists.stream().flatMap(Collection::stream).forEach(n -> System.out.print(n + " "));
+
+        LinkedList<Integer> linkedList = Stream.of(4, 5, 7, 1, 3, 5, 47, 98, 4).collect(LinkedList::new, LinkedList::add, LinkedList::addAll);
+        Set<Integer> set = Stream.of(4, 5, 7, 1, 3, 5, 47, 98, 4).collect(Collectors.toSet());
+        Stream.of(4, 5, 7, 1, 3, 5, 47, 98, 4).collect(Collectors.toMap(n -> n, n -> n * n, Integer::sum)).forEach((k, v) -> System.out.println("key: " + k + " - value:" + v));
+
+        Stream.of("Alice", "ram", "shyam", "mridul", "gita", "sita", "chaya", "gautam").collect(Collectors.groupingBy(String::length)).forEach((a, b) -> System.out.println(a + " - " + b));
+    }
+
+
+    private static void defaultFI() {
+        Supplier<String> supplier = () -> "hello from supplier";
+        System.out.println(supplier.get());
+
+        Consumer<String> consumer = System.out::println;
+        consumer.accept("hello from consumer");
+
+        Predicate<String> predicate = (str) -> str.startsWith("hello") && str.endsWith("predicate");
+        System.out.println(predicate.test("hello from predicate"));
+        System.out.println(predicate.test("good bye from predicate"));
+
+        Function<String, Integer> function = String::length;
+        System.out.println(function.apply("hello from function FI"));
+
+        BiFunction<Integer, String, Integer> biFunction = (val, str2) -> val + str2.length();
+        System.out.println(biFunction.apply(15, "from bifunction"));
+
+        UnaryOperator<String> uOp = (str) -> String.valueOf(str.length());
+        System.out.println(uOp.apply("hello from unary operator"));
+
+        BinaryOperator<String> bOp = (str1, str2) -> str1 + str2;
+        System.out.println(bOp.apply("Hello", "BiFunction"));
+    }
+}
+
+/*
+
+// Example of using Collectors.toMap()
+
+// Basic usage: converting a Stream of objects into a Map with a key and value mapper.
+Map<Integer, String> map1 = Stream.of("One", "Two", "Three")
+        .collect(Collectors.toMap(
+                s -> s.length(),      // keyMapper: using the length as key
+                s -> s.toUpperCase()    // valueMapper: converting to uppercase as value
+        ));
+
+// When keys may collide, provide a merge function to resolve duplicates.
+Map<Integer, String> map2 = Stream.of("one", "two", "three", "four")
+        .collect(Collectors.toMap(
+                s -> s.length(),                // key based on string length
+                s -> s.toUpperCase(),           // value in uppercase
+                (existing, replacement) -> existing + "," + replacement // merge function for duplicates
+        ));
+
+// Fully customizable overload: specify a map supplier along with merge function.
+Map<Integer, String> map3 = Stream.of("one", "two", "three", "four")
+        .collect(Collectors.toMap(
+                s -> s.length(),
+                s -> s.toUpperCase(),
+                (existing, replacement) -> existing + "," + replacement,
+                LinkedHashMap::new              // supply a LinkedHashMap to preserve insertion order
+        ));
+
+*/
+
+------------------------------------------------------------------------------------------------------
+
+
+package javanewcode;
+
+
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class CodingQues2 {
+    public static void main(String[] args) {
+//        stringCount();
+//        System.out.println(binarySearch(10));
+//        employeeStreams();
+
+//        String s = "hi hows are you anamika";
+//        String get = Arrays.stream(s.split(" ")).sorted(Comparator.comparing(String::length, Comparator.reverseOrder())).skip(1).limit(1).findFirst().get();
+//        System.out.println(get);
+
+        List<String> l1 = Arrays.asList("mumbai", "noida", "gurugram");
+        List<String> l2 = Arrays.asList("mumbai", "noida", "Lucknow");
+        List<String> l3 = Arrays.asList("mumbai", "noida", "Bangalore");
+        Stream.concat(Stream.concat(l1.stream(), l2.stream()).toList().stream(), l3.stream()).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet().stream().filter(a -> a.getValue() == 1).map(Map.Entry::getKey).forEach(System.out::println);
+
+    }
+
+    private static void employeeStreams() {
+        Map<Integer, Employee> map = new HashMap<>();
+        map.put(1, new Employee("CS", "Hari", 2000, "Lucknow"));
+        map.put(2, new Employee("EC", "Ram", 4000, "Noida"));
+        map.put(3, new Employee("EC", "Ram", 5000, "Lucknow"));
+        map.put(4, new Employee("EC", "Hari", 4000, "Noida"));
+        map.put(5, new Employee("CS", "Ram", 2000, "Pune"));
+        map.put(6, new Employee("EC", "Sita", 3000, "Gurgaon"));
+        map.put(7, new Employee("CE", "Ram", 3000, "Gurgaon"));
+        map.put(8, new Employee("EE", "Sita", 4000, "Gurgaon"));
+
+        Map<Integer, Employee> sortedMap = map.entrySet().stream()
+                .sorted(Comparator.comparing((Map.Entry<Integer, Employee> a) -> a.getValue().getCity()).thenComparing(a -> a.getValue().getName()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
+        sortedMap.forEach((a, b) -> System.out.println(a + " - " + b));
+
+        map.entrySet().stream().collect(Collectors.groupingBy(a -> a.getValue().getCity(), Collectors.summingInt(a -> a.getValue().getSalary()))).entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(System.out::println);
+
+        map.entrySet().stream().filter(a -> a.getValue().getCity().equalsIgnoreCase("Lucknow")).forEach(System.out::println);
+
+        Map<String, List<String>> emp = new HashMap<>();
+        emp.put("emp1", Stream.of("role1", "role2").collect(Collectors.toList()));
+        emp.put("emp4", Stream.of("role5", "role6").collect(Collectors.toList()));
+        emp.put("emp2", Stream.of("role3", "role4").collect(Collectors.toList()));
+        emp.put("emp3", Stream.of("role1", "role5").collect(Collectors.toList()));
+
+        Map<String, List<String>> filteredMap = emp.entrySet().stream().filter(a -> a.getValue().stream().noneMatch(b -> b.equals("role1") || b.equals("role2")))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        filteredMap.entrySet().forEach(System.out::println);
+
+        List<Employee2> employees = new ArrayList<>();
+        employees.add(new Employee2("ram", "Noida", 26200, 24, "science"));
+        employees.add(new Employee2("shyam", "Noida", 45777, 27, "medical"));
+        employees.add(new Employee2("mohan", "Gurgaon", 65200, 34, "electrical"));
+        employees.add(new Employee2("radhe", "Noida", 29200, 22, "science"));
+        employees.add(new Employee2("anant", "Lucknow", 18200, 28, "electrical"));
+        employees.add(new Employee2("manav", "Rampur", 35200, 36, "electrical"));
+        employees.add(new Employee2("shiv", "Sitapur", 45200, 20, "science"));
+        employees.add(new Employee2("kamal", "Rampur", 15200, 21, "humanities"));
+//
+        Map<String, Double> averageEmp = employees.stream().collect(Collectors.groupingBy(Employee2::getCity, Collectors.averagingInt(Employee2::getAge)));
+        averageEmp.entrySet().stream().collect(Collectors.toMap(a -> a.getKey().toUpperCase(), Map.Entry::getValue)).entrySet().forEach(System.out::println);
+        employees.stream().collect(Collectors.partitioningBy(a -> a.getAge() > 25)).entrySet().stream().filter(Map.Entry::getKey).flatMap(a -> a.getValue().stream().map(Employee2::getName)).forEach(System.out::println);
+
+        String str = "asdasdhiuelmbpoweiourtk,m.,bvlhasfuiyer";
+        Map<Character, Long> counts = str.chars().mapToObj(c -> (char) c).filter(Character::isLetter).collect(Collectors.groupingBy(a -> a, Collectors.counting()));
+        counts.entrySet().forEach(System.out::println);
+
+        Optional<Employee2> maxAge = employees.stream().max(Comparator.comparing(Employee2::getAge));
+        maxAge.ifPresent(a -> System.out.println(a));
+
+        String strs = " Hello how are you? what are you doing?";
+        System.out.println("Total questions are: " + (Arrays.stream(strs.split(" ")).filter(a -> a.contains("?")).count()));
+
+    }
+
+    private static int binarySearch(int elem) {
+        int[] num = {1, 4, 5, 7, 8, 10, 15, 18, 29, 48, 85, 86, 99};
+
+        int l = 0, r = num.length - 1;
+
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+            if (num[mid] == elem) return mid;
+            if (num[mid] < elem) {
+                l = mid + 1;
+            } else {
+                r = mid - 1;
+            }
+        }
+        return -1;
+    }
+
+    private static void stringCount() {
+        String str = "XXXSSXXSXXXVVSSQQAIIRMTTXXX";
+
+        Map<String, Integer> map = new HashMap<>();
+
+        int i = 0;
+        while (i < str.length()) {
+            int j = i + 1;
+            while (j < str.length() && str.charAt(j - 1) == str.charAt(j)) {
+                j++;
+            }
+            String sub = str.substring(i, j);
+            i = j;
+            map.put(sub, map.getOrDefault(sub, 0) + 1);
+        }
+
+        map.entrySet().stream().sorted(Comparator.comparing(Map.Entry<String, Integer>::getValue, Comparator.reverseOrder()).thenComparing(Map.Entry::getKey, Comparator.reverseOrder())).forEach(System.out::println);
+    }
+}
+
+
+class Employee2 {
+    String name;
+    String city;
+    int salary;
+    int age;
+    String department;
+
+    Employee2(String name, String city, int salary, int age, String department) {
+        this.name = name;
+        this.city = city;
+        this.salary = salary;
+        this.age = age;
+        this.department = department;
+    }
+
+    @Override
+    public String toString() {
+        return "name: " + name + ", city: " + city + ", salary: " + salary + ", age: " + age + ", department: " + department;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public int getSalary() {
+        return salary;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+}
+
+record Student2(String name, int age, int marks, String classNum) {
+}
+
+
+class StudentsGrade {
+    private String studentName;
+    private Map<String, Integer> grades; // Subject -> Marks
+
+    public StudentsGrade(String studentName, Map<String, Integer> grades) {
+        this.studentName = studentName;
+        this.grades = grades;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public Map<String, Integer> getGrades() {
+        return grades;
+    }
+}
+
+
+----------------------------------------------------------------------------------------------------
+package javanewcode;
+
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class CodingQuestions {
+    public static void main(String[] args) {
+
+//        employeeQuestions();
+//        studentQuestions();
+//        separateOneSide();
+//        numberQuestions();
+
+//        stringQuestions();
+//        groupAnangrams();
+//        topKElements();
+
+//        findPrimeNumber();
+    }
+
+    private static void numberQuestions() {
+        //print 0 to 10 without sing loops;
+//        IntStream.range(0, 11).forEach(System.out::println);
+//        IntStream.rangeClosed(1, 10).forEach(System.out::println);
+
+        int[] nums = {1, 2, 4, 1, 2, 1, 4, 2, 3, 1, 5};
+        Arrays.stream(nums).boxed().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet().stream().sorted(Comparator.comparing((Map.Entry<Integer, Long> a) -> a.getValue()).reversed().thenComparing((a, b) -> b.getKey().compareTo(a.getKey()))).forEach(System.out::println);
+    }
+
+    private static void topKElements() {
+        // 1. Build frequency map
+        int[] nums = {1, 2, 4, 4, 4, 1, 5, 1, 2, 1};
+        int k = 3;
+        Map<Integer, Integer> freq = new HashMap<>();
+        for (int n : nums) {
+            freq.put(n, freq.getOrDefault(n, 0) + 1);
+        }
+
+        // 2. Min‐heap ordered by frequency
+        PriorityQueue<Map.Entry<Integer, Integer>> pq =
+                new PriorityQueue<>(Comparator.comparingInt(Map.Entry::getValue));
+
+        // 3. Keep only top k entries in the heap
+        for (Map.Entry<Integer, Integer> e : freq.entrySet()) {
+            pq.offer(e);
+            if (pq.size() > k) {
+                pq.poll();
+            }
+        }
+
+        // 4. Extract keys into result array (reverse order yields highest freq first)
+        int[] res = new int[k];
+        for (int i = k - 1; i >= 0; i--) {
+            res[i] = pq.poll().getKey();
+        }
+        for (int re : res) {
+            System.out.println(re);
+        }
+    }
+
+
+    // Leetcode - 49. Group Anagrams
+    private static void groupAnangrams() {
+        String[] str = {"eat", "tea", "tan", "ate", "nat", "bat"};
+        HashMap<String, List<String>> map = new HashMap<>();
+        for (String s : str) {
+            char[] c = s.toCharArray();
+            Arrays.sort(c);
+            if (map.containsKey(Arrays.toString(c))) {
+                List<String> strs = map.get(Arrays.toString(c));
+                strs.add(s);
+            } else {
+                List<String> list = new ArrayList<>();
+                list.add(s);
+                map.put(Arrays.toString(c), list);
+            }
+        }
+
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+            System.out.println(entry);
+        }
+    }
+
+    // find prime numbers between 2 and 100 which does not contain 3 and 7
+    private static void findPrimeNumber() {
+
+        List<Integer> primes = new ArrayList<>();
+        for (int i = 2; i <= 100; i++) {
+
+            int digit = i;
+            boolean bad = false;
+            while (digit > 0) {
+                if (digit % 10 == 3 || digit % 10 == 7) {
+                    bad = true;
+                    break;
+                }
+                digit /= 10;
+            }
+            if (bad == true) continue;
+
+            for (int j = 2; j * j <= i; j++) {
+                if (i % j == 0) {
+                    continue;
+                }
+            }
+            primes.add(i);
+        }
+
+        primes.forEach(x -> System.out.print(x + " "));
+    }
+
+    private static void stringQuestions() {
+//        String s = "there is a tree tree whose leaves leaves are green";
+//        List<String> list = Arrays.asList(s.split(" "));
+//        Arrays.stream(s.split(" ")).collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).entrySet().stream().filter(x -> x.getValue() == 2).forEach(System.out::println);
+
+        //find duplicate characters in a string
+//        String s2 = "Hi, How are you? Can we connect? Need to discuss ,few things.";
+//        s2.chars().mapToObj(c -> (char) c).filter(Character::isLetter).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+//                .entrySet().stream().filter(x -> x.getValue() == 2).forEach(System.out::println);
+
+        //find digit and alphabet and alphanumeric
+//        String s3 = "how are you!@1236";
+//        Map<String, List<Character>> res = s3.chars().mapToObj(c -> (char) c).collect(Collectors.groupingBy(c -> {
+//            if (Character.isDigit(c)) return "digit";
+//            else if (Character.isLetter(c)) return "letter";
+//            else return "others";
+//        }));
+//        res.entrySet().stream().forEach(System.out::println);
+
+        //reverse string
+//        String s4 = "I love my country";
+////        System.out.println(new StringBuilder(s4).reverse());
+//        char[] chars = s4.toCharArray();
+//        int i = 0, j = chars.length - 1;
+//        while (i < j) {
+//            char temp = chars[j];
+//            chars[j--] = chars[i];
+//            chars[i++] = temp;
+//        }
+//        new String(chars).chars().mapToObj(x -> (char) x).forEach(System.out::print);
+
+        //WAP to Find the unique element of the array “{4,5,5,7,6,6,7,4,9,5}”?
+
+//        int[] nums = new int[]{4, 5, 5, 7, 6, 6, 7, 4, 9, 5};
+//        Arrays.stream(nums).boxed().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).entrySet().stream().filter(x -> x.getValue() == 1).map(Map.Entry::getKey).forEach(System.out::println);
+
+        //given array of string, find the count of each word in string
+//        String[] str = {"Spring java microservices", "java Spring", "microservices java"};
+//        Map<String, Long> map = Arrays.stream(str).flatMap(x -> Arrays.stream(x.split(" "))).collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+//        map.entrySet().forEach(System.out::println);
+
+        //print count of each word sorted in decreasing order of name
+        String names = "ram, lakhan, mohan, ram, lakhan, madhav";
+        Arrays.stream(names.split(", ")).collect(Collectors.groupingBy(Function.identity(),
+                Collectors.counting())).entrySet().stream().sorted(Map.Entry.<String, Long>comparingByValue().reversed()).forEach(System.out::println);
+
+        int[] arr2 = {1, 2, 4, 5, 3, 5, 4, 1, 6, 1, 1, 1, 1, 3};
+        Arrays.stream(arr2).filter(x -> x != 1).boxed().collect(Collectors.groupingBy(x -> x, Collectors.counting())).keySet().stream().mapToInt(Integer::intValue).max().ifPresent(System.out::println);
+    }
+
+    private static void separateOneSide() {
+        int[] arr = new int[]{5, 2, 4, 1, 2, 3, 6, 45, 1, 1, 4, 2, 1, 2, 4, 1};
+
+        int[] arr2 = {1, 2, 4, 5, 3, 5, 4, 1, 6, 1, 1, 1, 1, 3};
+        Arrays.stream(arr2).filter(x -> x != 1).boxed()
+                .collect(Collectors.groupingBy(x -> x, Collectors.counting())).entrySet().stream().forEach(System.out::println);
+        int update = 0;
+
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == 1) {
+                int temp = arr[update];
+                arr[update++] = arr[i];
+                arr[i] = temp;
+            }
+        }
+
+        int pos = arr.length - 1;
+        for (int i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] != 1) {
+                int temp = arr[i];
+                arr[i] = arr[pos];
+                arr[pos--] = temp;
+            }
+        }
+
+        while (pos >= 0) {
+            arr[pos--] = 1;
+        }
+
+        for (int num : arr) {
+            System.out.print(num + ", ");
+        }
+    }
+
+    private static void employeeQuestions() {
+        List<Employee> empList = new ArrayList<>();
+        empList.add(new Employee("CS", "Hari", 2000,"Lucknow"));
+        empList.add(new Employee("EC", "Ram", 4000,"Noida"));
+        empList.add(new Employee("EC", "Ram", 5000,"Lucknow"));
+        empList.add(new Employee("EC", "Hari", 4000,"Noida"));
+        empList.add(new Employee("CS", "Ram", 2000,"Pune"));
+        empList.add(new Employee("EC", "Sita", 3000,"Gurgaon"));
+        empList.add(new Employee("CE", "Ram", 3000,"Gurgaon"));
+        empList.add(new Employee("EE", "Sita", 4000,"Gurgaon"));
+
+        empList.stream().collect(Collectors.groupingBy(Employee::getName, Collectors.summingInt(Employee::getSalary))).entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(System.out::println);
+
+        empList.sort(Comparator.comparing(Employee::getName).reversed().thenComparing(Employee::getDepartment).reversed().thenComparing(Employee::getSalary));
+        empList.sort(Comparator.comparing(Employee::getName).reversed().thenComparing(Comparator.comparing(Employee::getDepartment).reversed()).thenComparing(Employee::getSalary));
+        empList.forEach(System.out::println);
+
+        empList.stream().collect(Collectors.groupingBy(Employee::getName, Collectors.summingInt(Employee::getSalary))).entrySet()
+                .stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).forEach(System.out::println);
+        empList.stream().collect(Collectors.groupingBy(Employee::getDepartment, Collectors.summingInt(Employee::getSalary)))
+                .entrySet().stream().sorted((a, b) -> b.getValue().compareTo(a.getValue())).forEach(System.out::println);
+
+        Map<Integer, Employee> map = new HashMap<>();
+        map.put(1, new Employee("CS", "Hari", 2000, "Lucknow"));
+        map.put(2, new Employee("EC", "Ram", 4000, "Noida"));
+        map.put(3, new Employee("EC", "Ram", 5000, "Lucknow"));
+        map.put(4, new Employee("EC", "Hari", 4000, "Noida"));
+        map.put(5, new Employee("CS", "Ram", 2000, "Pune"));
+        map.put(6, new Employee("EC", "Sita", 3000, "Gurgaon"));
+        map.put(7, new Employee("CE", "Ram", 3000, "Gurgaon"));
+        map.put(8, new Employee("EE", "Sita", 4000, "Gurgaon"));
+
+        map.entrySet().stream().sorted(Comparator.comparing(a->a.getValue().getCity())).sorted(Comparator.comparing(a->a.getValue().getName())).map(Map.Entry::getValue).forEach(System.out::println);
+        map.entrySet().stream().sorted(Comparator.comparing((Map.Entry<Integer, Employee> a) -> a.getValue().getCity()).thenComparing(a -> a.getValue().getName()).thenComparing(a -> a.getValue().getDepartment())).map(Map.Entry::getValue).forEach(System.out::println);
+        map.values().stream().sorted(Comparator.comparing(Employee::getCity).thenComparing(Employee::getName)).forEach(System.out::println);
+
+//         filter out employees with role1 or role 2
+        Map<String, List<String>> emps = new HashMap<>();
+        emps.put("emp1", List.of("role1", "role2"));
+        emps.put("emp2", List.of("role3", "role4"));
+        emps.put("emp3", List.of("role1", "role5"));
+
+        emps.entrySet().stream().filter(val -> val.getValue().stream().noneMatch(a -> a.equals("role1") || a.equals("role2"))).forEach(System.out::println);
+
+        emps.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, a -> String.join(",", a.getValue()))).entrySet().forEach(System.out::println);
+
+
+    }
+
+    private static void studentQuestions() {
+        List<Student> studentList = new ArrayList<>();
+        studentList.add(
+                new Student(1, "ram lakhan", 96, 7, 2110));
+        studentList.add(new Student(2, "shyam", 95, 7, 2350));
+        studentList.add(new Student(3, "Hari", 94, 8, 1900));
+        studentList.add(new Student(4, "Govind", 76, 9, 2100));
+        studentList.add(new Student(5, "ram kumar", 83, 8, 2300));
+        studentList.add(new Student(6, "Madhav", 87, 9, 2100));
+        studentList.add(new Student(7, "Krishn", 77, 9, 1890));
+        studentList.add(new Student(8, "Murari", 83, 7, 2200));
+
+        String res = studentList.stream().map(Student::getName).collect(Collectors.joining(", "));
+        System.out.println(res);
+
+        double average = studentList.stream().mapToInt(Student::getScore).average().orElse(0.0);
+        System.out.println("average score: " + average);
+        List<String> names = studentList.stream().filter(x -> x.getScore() > average).map(Student::getName).toList();
+        System.out.println("names: " + names);
+//        studentList.stream().sorted(Comparator.comparing(Student::getScore).reversed()).limit(1).forEach(System.out::println);
+        studentList.stream().max(Comparator.comparing(Student::getScore)).ifPresent(System.out::println);
+        System.out.println("student score average per class");
+        studentList.stream().collect(Collectors.groupingBy(Student::getClassId, Collectors.averagingInt(Student::getScore)))
+                .entrySet().stream().sorted(Map.Entry.comparingByKey(Comparator.reverseOrder())).forEach(System.out::println);
+        System.out.println("fee total - sum per class");
+        studentList.stream().collect(Collectors.groupingBy(Student::getClassId, Collectors.summingInt(Student::getFee)))
+                .entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).forEach(System.out::println);
+    }
+}
+
+
+class Employee {
+    private String department;
+    private String name;
+    private Integer salary;
+    private String city;
+
+    public Employee(String department, String name, Integer salary, String city) {
+        this.department = department;
+        this.name = name;
+        this.salary = salary;
+        this.city = city;
+    }
+
+    public String getDepartment() {
+        return this.department;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public Integer getSalary() {
+        return this.salary;
+    }
+
+    public String getCity() {
+        return this.city;
+    }
+
+    @Override
+    public String toString() {
+        return "department: " + this.department + ", name: " + name + ", salary: " + salary + ", city: " + city;
+    }
+}
+
+
+class Student {
+    private int id;
+    private String name;
+    private int score;
+    private int classId;
+    private int fee;
+
+    public Student(int id, String name, int score, int classId, int fee) {
+        this.id = id;
+        this.name = name;
+        this.score = score;
+        this.classId = classId;
+        this.fee = fee;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public int getScore() {
+        return this.score;
+    }
+
+    public int getClassId() {
+        return this.classId;
+    }
+
+    public int getFee() {
+        return this.fee;
+    }
+
+    @Override
+    public String toString() {
+        return "id: " + id + ", name: " + name + ", score: " + score + ", classId: " + classId + ", fee: " + fee;
+    }
+}
+
+
+----------------------------------------------------------------------------------------
+
+
+sape - 1
+
+--------------
+
+Intro? Tech stack? Current project? Logical view?
+do you know about solid principles? Explain with use cases.
+what is dynamic polymorphism?
+Question: There is a class mycode. It has a main method. There are there is a parent class employee, and it has two sub classes child classes. IT employee extends employeeand  finance employee extends employee. Everyone has M1 method in it. Employee IT employee and finance employee. Then I have employee equals to new IT employee. Which M1 method would be called when I say E dot M1? which M1 method would be called it? Is from employee or IT employee or finance employee?
+
+
+Now Consider all M1 methods I've made it as static, then which M1 method would be called?
+Is it possible to override static methods?
+Now on line number 23, if I do it employee E equals to new IT employee. And I do E dot M1 then which M1 method would be called? Or it would give me a compilation error?
+Do you know concept of serialization? Use case?
+I do not want a particular member of class to serialize or deserialize. do you know what we will have to do for that?
+In the process of serialization and deserialization, how to ensure that same object is serialized and deserialized?
+do you know the concept of immutability?
+If we make any object final, we cannot change. Also same with custom immutable object, Then what is the difference between final and immutable?
+Do you know about libraries like Java libraries? Spring boot libraries? Have you used them and which libraries you have used?
+which data structures you have used?
+I have to search more frequently through the data. There is lot of data and I have to search more frequently through that data and in other case same data but I have to do upserts like inserts, delete, update on that data. So which data structure to use in which case? So for example for searching, which would be better? And for upserts, which would be better. There is huge data.
+What would be the complexity of searching in array list? And complexity of linkedlist while insertion.
+Do you know random access in arraylist?
+Do you know internals of hashset?
+What is the contract between equals and hash code?
+What are failsafe and failfast collections? In the failfast, how does the failing happen?
+What is load factor?
+Do you know about sorting algorithms? how does the bubble sort work? And how does the insertion sort works?
+So have you worked with spring core fundamentals? what is the default bean scope?
+What is the difference between @ qualifier and @ primary?
+Have you worked with design patterns? Which ones? Explain the ones you have worked on with use cases,
+So what are the different categories of design patterns?
+which behavioural design patterns have you used? Is you have used any?
+Write a singleton class. Then make it thread safe. It should not be broken using reflection serializable and cloneable.
+what are the different types of cloning?
+have you worked with multithreading?
+do you know about executor service? Explain! Write a piece of code where I have to instantiate new thread using executor service.
+Do you know what is Completable future?
+do you know about reentrant lock?
+Do you know about cyclic barrier?
+So what are the new features you have used from Java 8?
+what is functional interface? So what are the contents of functional interface? How is it different from a normal interface?
+what is predicate and bipredicate?
+what are optional classes? what are the methods of optional class?
+Question: Use streams for below.
+
+What are the different intermediate and terminal operators?
+Do you know why streams are called lazy evaluators?
+What is flatmap?
+Question: Below is a problem of anagrams. Write the code.
+
+So which messaging technology you have worked with? Zookeeper? Error handling?
+Can you write a query to find the third highest salary? So in I have employee table with ID, name and salary and department ID. I have another table department with ID and name. I want to filter department name and average salary of each department.
+Do you know about a clustered index and non-clustered index?
+have you used any ORM tool? what are the different relationships?
+do you know about fetch types? what is the default fetch type for one too many relationship? And many to many?
+what is composite keyword?
+How to maintain ACID properties in hibernate?
+Have you worked with JVM configurations?
+ what is garbage collection? What are the different types of garbage collectors?
+Have you worked with Java profiler?
+Have you done unit testing? what annotations have you used? Which framework you have used for unit test cases?
+do you know difference between mock and spy?
+Do you know about TDD?
+which build tool you are using? any code quality plugins you have used?
+Do you know about Jenkins pipeline? Have you written Jenkins pipeline?
+Do you know about Docker? do you know what Docker commands and all how to write Docker?
+Any log monitoring tool? Have you used any log frameworks?
+Have you participated in troubleshooting?
+Have you delivered any hot fixes or rollbacks on prod?
+do you know what release strategy? Like canary and blue green deployments?
+ Any experience with front end technologies?
+Do you know about NFR? Non-Functional Requirements like scalability, availability, performance, security, multitenancy?
+So did you participate in code reviews?
+So how do you maintain artifacts for development? Or any documentation?
+Do you know about HLD, LLD?
+What are rest principles? The best practices?
+How do you do error handling in rest APIs? Do you know about global exception handler? How does it work?
+Do you know why rest APIs are called as idempotent?
+How to maintain profiles in spring boot application?
+Have you worked in microservices?
+So multiple microservices are dependent on each other. But one of them is causing some issue. How to know which microservice is not working and how to rectify it?
+what is saga design pattern? Do you know?
+What is cqrs?
+any caching technology have you used?
+Which cloud? Which services?
+Do you know basic authentication in spring?
+Have you worked with JWT token? do you know structure of JWT token?
+What is the entry point of Microservices architecture?
+Have you worked with API gateways? Which one? Have you done the setup?
+have you worked using Kubernetes?
+
+-----------------------------------------------------------------------------------
+
+sap - 2
+
+Intro? Tech Stack? Daily responsibilities?
+Which version of Java have you worked on?
+Question: You need to find out the longest continuous substring which this array of the string can form. Write the code.
+
+Do you know the exception hierarchy? Is the below code snippet correct?
+
+Do you know the difference between composition and aggregation?
+Which collection classes have you worked on?
+How hashmap works internally? What are the improvements that have been done in Java 8 in relation to hashmap?
+Failsafe and failfast iterators? So what failfast, what collection classes we should use? And for failsafe?
+There are some changes related to heap memory in Java 8. What are those? What is metaspace?
+Do you know what is functional interface?
+What is predicate? Write the pseudo code.
+What is bipredicate? Write the pseudo code.
+Do you know what is bifunction? Write the pseudo code. Write an example.
+what is optional?
+Did you use completablefuture? What is it? Write an example. Some pseudo code. Why is it used?
+Do you know parallel streams? Why were they introduced in Java 8?
+what is lazy stream?
+What is serialization? Let's say employee is a class. It has some fields, like ID, name, address etc. and you need to write it down as a serializable class. (serialize and deserialize it).
+Now Let's say there is one more attribute that is salary and employee doesn't want to save its salary in the file. Then how? (transient keyword)
+And do you know how this this serializable file gets stored? What are the fields? In what format is the data stored?
+And do you know what is externalization?
+What is immutability in Java? Write one custom immutable class.
+Make the following immutable:
+
+(Can you create object of employee class? let's say you are creating an employee class as immutable. Then you need to create object of this employee class. You need to set the data attributes in this object and that object can be accessed from somewhere else. So you need to do the complete functionality.)
+Do you know what is deep copy and shallow copy?
+Question: you have a map of employees. You have employee name and their list of roles. Remove all those employees who have a role1or role2. You need to remove the Employee. So if you see emp1 have role1 and role2. emp3 has role1 also. You need to remove both emp1 and emp3. The final map will be EMP2 only with the roles. Write the Stream code.
+
+Do you know the difference between runnable and callable?
+Do you know the difference between execute and submit methods?
+How can we create the executor thread pool?
+what is difference between synchronized block and synchronized method?
+what is thread local?
+what is reentrant lock? Can you write down some example?
+have you used blocking queue or the concurrenhashmap?
+Gang of Four (GOF) design patterns – Which ones have you used?
+have you worked on a structural or behavioural design patterns?
+Can you write down some sample code for Singleton? Make it thread safe. What about if two threads are accessing the method at the same time?
+If we talk about the lazy initialization and double lock Singleton class, can you change it to that implementation?
+Question: Can you sort the below in descending order using Streams? The duplicate values can be printed twice in the output.
+
+Have you worked on any messaging service like Kafka?
+Let's consider an example. We have 5 consumers. We have an ecommerce site and when order got placed, the detail of that order should be forwarded to five different consumers. And each consumer has multiple instances. So, we need to configure our Kafka service in a way that each producer will produce that order detail in a single topic. And those five consumers will consume it. Now, we need to perform the scaling, and it should be on high performance and high reliability. What can you do for that? (we have 5 consumers and only one Kafka topic. So we need to make sure that no consumer should lose that particular message)
+do you know what is ISR (In-sync replica)?
+Do you know message compression in Kafka?
+What is a consumer group?
+do you know the schema registry process?
+Do you know the concept of leader and follower?
+Due to some reason your leader got down or it is impacted. Then how the new leader will be allocated?
+Did you also work on Kafka streaming?
+what about the serialization and deserialization process?
+In case your consumer received a message, and it got error out. How you handle this error? How can you reprocess that message again?
+Let's consider the order detail. Due to the order detail, there is some attribute that is missing. So, when parsing that message, it got there is an exception. But your consumer already read that message from the topic. How you can reprocess that particular message? (Retry mechanism)
+Do you know on the types of joins? Can you write down a query for left join?
+What is indexing? Have you ever created any index? How?
+can you write down a query to find top three employee according to their salary?
+JPA? in JPA, you used repository, or you also used entity manager or Criteria API?
+What is N+1 problem in JPA?
+Let's consider one example where you need to write a custom query instead of JPA repository. Because JPA repository is not that much rich in terms of subquery. How can you write it? Can you name that annotation through which you can write the query?
+Can you write the query with annotation? Let's consider this is your repository class or repository interface and the query you have written for the above problem, you need to write the method.
+So in JPA we have a relationships. Can you write down one case where you are write the annotation for one to one relationship?
+Consider you have a model class in JPA. Just like user and you have address and other attributes as well. But out of those you don't want to save few attribute when your repository.save method gets called. What you need to do, how you can handle that?
+What are the REST principles? Like stateless etc
+how to handle global exception in Springboot? And what is the annotation for class?
+Can you name some annotations? Like if we want to send parameters in the request, in the headers in and how we do the versioning for our API? Can you elaborate these with the annotations?
+how can we pass path variable? Can you name that annotation?
+I want to create a filter where each request should be added with one extra header attribute. How? Consider an example - Your order service needs one extra attribute and on top of that one orchestration service which is used to call your order service. And your mobile and web client are calling your orchestration service. And they are not sending you the header attribute. From your orchestration service, you need to pass that header in each request to you’re the order service. So for that you need to add one filter in your orchestration service with each request.
+So can you tell me when we pass the request body in post or put method - at that time we want to validate some inputs like mobile number should be 10 digits, e-mail should be like this or some date pattern. Can you explain how it happens in spring?
+Have you worked on Swagger? you worked on Spring cloud spring reactive?
+And in your existing microservice architecture, how your service is interacting with each other?
+Have you heard about feign client? What is that?
+Do you know how we handle the local transactions in spring boot? So, in Saga, which design pattern you used – Orchestration or Choreography?
+Apart from SAGA, what design microservice design patterns you know and on what you worked on?
+What is event driven architecture?
+Which caching mechanism have you used? have you used spring cache? what feature you used for Redis cache and how?
+Have you worked on graph QL?
+Which cloud? And services? Have you used Lambda function or S3s etc?
+And what about logging and monitoring tools?
+have you worked on JWT? Explain how?
+did you use the spring security?
+Have you ever bought with JWT and spring security with the help of any Identity provider like LDAP?
+And in spring security, let's consider there are few endpoints that I don't want to secure, and there are few endpoints which I need to secure with authentication and authorization. How can we achieve it? Can you tell me that annotation?
+what about that Oauth implementation? Do you have any understanding about that?
+what API gateway have you used?
+Anything on client credentials?
+did you ever create any logical view, sequential view, class diagram, UML diagrams?
+are you aware about the application layering of your project? How is it happening?
+Have you heard the term that is NFR (nonfunctional requirements)? Like scalability, availability, performance, security etc? Anything of Data at rest/in motion/in use?
+What is multitenant architecture?
+And have you ever worked on performance or on auto scaling?
+Any POCs you have done? Any certifications?
+Are you also doing code reviews?
+What about Jenkins and CICD? Which build tool are you using? Maven or Gradle?
+Any SCM tool?
+what about the code quality tools?
+What about docker and Kubernetes?
+What about the endpoint testing tool? Jnit and Mockito? @mock vs @injectmock?
+What is TDD and BDD?
+And what about production support? Bug fixing and server side troubleshooting? What are Blue Green and Canary deployments?
+And in terms of rollback, if any production release got failed, how the rollback process is?
+Have you ever got a chance to check the garbage collection algorithm? GC Algos?
+Have you done JVM configuration? Any profiling tool you have worked on?
+What are the improvements that have been done in Java 8 in terms of memory?
+
+------------------------------------------------------------------------------
+
+
+epam - 1
+
+class loader - types of class loader
+garbage collection process - algorithms
+JVM memory spaces
+what changes done in java 8 related to java memory
+working of hashset
+arraylist vs linkedlist
+hashSet vs LinkedHashSet vs TreeMap
+
+design principles
+singleton - how to implement, example - how to break singleton pattern
+builder pattern - how to implement, example
+factory pattern - how to implement, example
+SOLID principles
+
+hashMap vs concurrent hashMap vs synchronised hash map
+in concurrent hashmap - suppose we have 100 read and 100 write operation then how many will occur at once.
+volatile keyword
+callable runnable
+
+Optional class and it's different methods
+method references
+Java date time API why introduces in java 8
+
+indexes in database
+normalisation
+database sharding
+having vs where difference - SQL
+
+JUnit,Mockito
+limitations of Mockito
+how to test private methods and static method
+
+
+------------------------------------------------------
+given a list of numbers, print the numbers order by frequency in decreasing order
+two sum problem
+------------------------------------------------------
+
+EPAM Systems - first round
+
+-----------------------
+
+EPAM-2
+
+eks vs ecs
+standard vs glacier s3 storage
+clouwatch ways to filter logs
+
+ArrayList vs LinkedList
+
+how to maintain distributed transaction - SAGA
+SOLID principles
+
+future vs completableFuture
+runnable vs callable
+ways to create thread pools
+volatile vs synchronised
+mock vs spy
+spring-boot-starter
+different JPA annotations
+mention design pattern - names
+
+Table vs view
+inner join vs left join
+
+kubernetes ingress, service, deployments
+kafka topics, partition, consumer group, how to maintain order of messsage delivery
+ACK design in messaging
+
+
+distributed tracing
+database partitioning, how to implement data fetch from partitioned data in spring boot
+distributed logging management, how to transfer logs from pods to clouwatch
+standup in agile
+
+Given a list of Students(id, name, score) - using streams
+    find the average score
+    find the students name above average score
+    find the student with max score
+--------------------
+epam round 2
+----------------------------------------------------------------------------
+
+Asked Interview questions:
 
 synchronised HashMap vs ConcurrentHashMap
 ——
 Given an String (anamika), create its frequency String( a2n1m1i1k1) using java stream
-1- Preserve the insertion order in the output 
+1- Preserve the insertion order in the output
 2- in output character should be in ascending order
 ——-
-Given an employee list- Find the third highest salary in each department using Java stream 
+Given an employee list- Find the third highest salary in each department using Java stream
 ——-
 Given an employee list, find no of employees per department using Java stream
 ——-
 Left join poocha tha..
 Find First non repeating character in a string- coding
 ——-
-Java 8 streams k coding questions pooche 
+Java 8 streams k coding questions pooche
 Grouping By / Counting ke
 ——-
 Multi threading me odd even print krana tha
 Using seperate thread
-[11:33 am, 18/9/2026] Amarnath Tiwari: /Problem: Given a List of logRecords, write a method to find the log records between “2023-06-21 14:35:00” and “2023-06-21 14:45:00 using java stream/
+
+------------------------------------------------------
+
+
+/Problem: Given a List of logRecords, write a method to find the log records between “2023-06-21 14:35:00” and “2023-06-21 14:45:00 using java stream/
         List<String> logRecords = Arrays.asList(
                 "2023-06-21 14:35:00 INFO Application started successfully",
                 "2023-06-21 14:40:00 DEBUG Loading configuration",
                 "2023-06-21 14:45:00 INFO Application shutdown",
                 "2023-06-21 14:50:00 ERROR Failed to load resource"
         );
-[11:33 am, 18/9/2026] Amarnath Tiwari: Poora joda date time api aana chahiye
-[11:33 am, 18/9/2026] Amarnath Tiwari: Format vgrh change Krna..string se LocalDateTime me parse krna
+
+
+------
+string se LocalDateTime me parse krna
+-----
+Given an String (anamika), create its frequency String( a2n1m1i1k1) using java stream
+
