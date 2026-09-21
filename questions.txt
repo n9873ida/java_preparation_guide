@@ -1,0 +1,33 @@
+[11:33 am, 18/9/2026] Amarnath Tiwari: synchronised HashMap vs ConcurrentHashMap
+[11:33 am, 18/9/2026] Amarnath Tiwari: Given an String (anamika), create its frequency String( a2n1m1i1k1) using java stream
+[11:33 am, 18/9/2026] Amarnath Tiwari: 1- Preserve the insertion order in the output 
+2- in output character should be in ascending order
+[11:33 am, 18/9/2026] Amarnath Tiwari: Asked Interview questions:
+
+synchronised HashMap vs ConcurrentHashMap
+——
+Given an String (anamika), create its frequency String( a2n1m1i1k1) using java stream
+1- Preserve the insertion order in the output 
+2- in output character should be in ascending order
+——-
+Given an employee list- Find the third highest salary in each department using Java stream 
+——-
+Given an employee list, find no of employees per department using Java stream
+——-
+Left join poocha tha..
+Find First non repeating character in a string- coding
+——-
+Java 8 streams k coding questions pooche 
+Grouping By / Counting ke
+——-
+Multi threading me odd even print krana tha
+Using seperate thread
+[11:33 am, 18/9/2026] Amarnath Tiwari: /Problem: Given a List of logRecords, write a method to find the log records between “2023-06-21 14:35:00” and “2023-06-21 14:45:00 using java stream/
+        List<String> logRecords = Arrays.asList(
+                "2023-06-21 14:35:00 INFO Application started successfully",
+                "2023-06-21 14:40:00 DEBUG Loading configuration",
+                "2023-06-21 14:45:00 INFO Application shutdown",
+                "2023-06-21 14:50:00 ERROR Failed to load resource"
+        );
+[11:33 am, 18/9/2026] Amarnath Tiwari: Poora joda date time api aana chahiye
+[11:33 am, 18/9/2026] Amarnath Tiwari: Format vgrh change Krna..string se LocalDateTime me parse krna
